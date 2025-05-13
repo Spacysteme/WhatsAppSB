@@ -79,9 +79,9 @@ Le bot utilise les bibliothèques suivantes :
 
 Installe-les avec la commande :
 
-    ```bash
-    npm install whatsapp-web.js qrcode-terminal figlet
-    ```
+```bash
+npm install whatsapp-web.js qrcode-terminal figlet
+```
 
 ---
 
