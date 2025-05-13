@@ -139,18 +139,23 @@ async function showChatMenu(isGroup) {
       availableCommands.push("lovecalc", "user-info");
     }
 
-    console.log(`\n🎯 Tape une commande (${availableCommands.map(c => `"${c}"`).join(', ')}, "exit") :`);
+    console.log(`\n🎯 Tape une commande (${availableCommands.map(c => `"${c}"`).join(', ')} ou "exit" :`);
     const rl2 = readline.createInterface({
       input: process.stdin,
       output: process.stdout
     });
 
-    rl2.question('> ', async (cmdName) => {
-      if (cmdName === 'exit') {
+    rl2.question('> ', async (cmdInput) => {
+      if (cmdInput.trim().toLowerCase() === 'exit') {
         console.log('👋 Retour au menu principal !');
         rl2.close();
         return mainMenu();
       }
+
+      // 🧠 Séparation commande + args (ex: ascii Hello world)
+      const parts = cmdInput.trim().split(/\s+/);
+      const cmdName = parts.shift().toLowerCase();
+      const args = parts;
 
       if (!availableCommands.includes(cmdName)) {
         console.log('❌ Commande invalide pour ce chat.');
@@ -175,7 +180,7 @@ async function showChatMenu(isGroup) {
             }
           };
 
-          await command.execute(fakeMessage, [], rl2, client, selectedChat);
+          await command.execute(fakeMessage, args, rl2, client, selectedChat);
         } else {
           console.log('❌ Ce fichier ne contient pas de fonction execute.');
           rl2.close();

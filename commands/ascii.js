@@ -1,31 +1,29 @@
 // commands/ascii.js
-const figlet = require('figlet'); // npm install figlet
+const figlet = require('figlet');
+const readline = require('readline');
 
 module.exports = {
   name: 'ascii',
-  description: 'Transforme un texte en ASCII Art',
-  async execute(message, args, rl, client, selectedChat) {
-    const inputText = args.join(' ');
-
-    // Si aucun texte fourni
-    if (!inputText) {
-      return message.reply('❗ Tu dois me donner un texte à transformer en ASCII !\nExemple : `ascii Hello world`');
-    }
-
-    // Crée l'ASCII art à partir du texte
-    figlet(inputText, (err, data) => {
-      if (err || !data) {
-        console.error('Erreur figlet:', err);
-        return message.reply('❌ Une erreur est survenue lors de la génération du texte ASCII.');
+  execute(message, args, rl) {
+    rl.question('✏️ Quel texte veux-tu transformer en ASCII art ? ', (inputText) => {
+      if (!inputText || inputText.trim().length === 0) {
+        message.reply('❌ Tu dois entrer un texte valide.');
+        rl.close();
+        return;
       }
 
-      // Vérifie que l'art ASCII n’est pas trop long pour WhatsApp (~4000 caractères max)
-      if (data.length > 3900) {
-        return message.reply('⚠️ Ton texte est trop long pour être affiché en ASCII dans WhatsApp. Essaye avec quelque chose de plus court.');
-      }
+      figlet(inputText, (err, data) => {
+        if (err) {
+          console.log('❌ Erreur lors de la génération de l\'ASCII art');
+          message.reply('❌ Une erreur est survenue pendant la génération.');
+        } else {
+          console.log('\n🖼️ ASCII Art généré :\n');
+          console.log(data);
+          message.reply(`\`\`\`\n${data}\n\`\`\``);
+        }
 
-      // Envoie l'ASCII art dans le chat
-      message.reply(`🖼️ Voici ton ASCII Art !\n\`\`\`\n${data}\n\`\`\``);
+        rl.close(); // On ferme le readline ici, comme dans la 8ball
+      });
     });
   }
 };
